@@ -13,7 +13,7 @@ BOT_NAME = 'HomeResource'
 SPIDER_MODULES = ['HomeResource.spiders']
 NEWSPIDER_MODULE = 'HomeResource.spiders'
 
-LOG_LEVEL="WARNING"
+# LOG_LEVEL="WARNING"
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'HomeResource (+http://www.yourdomain.com)'
 
@@ -71,8 +71,9 @@ DB_CHARSET = 'utf8'
 
 
 ITEM_PIPELINES = {
-   'HomeResource.pipelines.HomeresourcePipeline': 300,
+   # 'HomeResource.pipelines.HomeresourcePipeline': 300,
    'HomeResource.pipelines.MysqlPipline': 301,
+   # 'HomeResource.pipelines.pipline2': 302,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

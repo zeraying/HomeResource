@@ -15,5 +15,7 @@ class HomeresourceItem(scrapy.Item):
     cp = scrapy.Field()
     information = scrapy.Field()
     picture = scrapy.Field()
-    locat = scrapy.Field()
+    picture1 = scrapy.Field()
+    area = scrapy.Field()
+    locate = scrapy.Field()
     pass

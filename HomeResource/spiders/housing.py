@@ -1,21 +1,16 @@
 import re
 
+import requests
 import scrapy
 from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import CrawlSpider, Rule
 from HomeResource.items import HomeresourceItem
-
+# import urllib.request
 
 class HousingSpider(scrapy.Spider):
     name = 'housing'
     allowed_domains = ['www.gu-gu.com']
-    start_urls = ['https://www.gu-gu.com/index/index/index?page=1.html']
-
-    rules = (
-        Rule(LinkExtractor(allow=r'/index/index/index?page=\d+\.html'),
-             callback='parse',
-             follow=False),
-    )
+    start_urls = ['https://www.gu-gu.com/index/all/index']
 
     def parse(self, response):
         img_list = response.xpath('/html/body/div[4]/div[5]/div/div[2]/dl')
@@ -24,10 +19,10 @@ class HousingSpider(scrapy.Spider):
             price = img.xpath('./dd/div/p/span/text()').extract_first()
             location = img.xpath('./dd/p[@class="gray6"]/text()').extract_first()
             housing = HomeresourceItem(title=title, price = price, location=location)
-            # url = img.xpath('./dd/p[@class="title"]/a/@href').extract_first()
+            url = img.xpath('./dd/p[@class="title"]/a/@href').extract_first()
             # yield scrapy.Request(url='https://www.gu-gu.com/' + url, callback=self.new_parse)
             yield housing
-        # 获取下一页url
+        # 获取下一页url  `
         self.page_url = response.xpath('//*[@id="listBox"]/ul/li/a/@href').extract()
         # page_url 是一个数组
         for next_url in self.page_url:
@@ -43,11 +38,16 @@ class HousingSpider(scrapy.Spider):
             if g != g+1:
                 num = g+1
             for i in a:
-                if re.match('https', i) == None:
+                if re.match('http', i) == None:
                     i = 'https://www.gu-gu.com' + i
                     a[g] = i
                     g = g + 1
             picture = a[0]
-            locat = img.xpath('./div[1]/div[2]/div[5]/div[2]/div[2]/a/text()').extract_first()
-            housing = HomeresourceItem(cp=cp, information=information, picture=picture, locat = locat)
+            locate = img.xpath('./div[1]/div[2]/div[5]/div[2]/div[2]/a/text()').extract_first()
+            picture1 = requests.get(url=picture).content
+            print(type(picture1))
+            Area = img.xpath('./div[1]/div[2]/div[3]/div[3]/div[1]/text()').extract_first()
+            area = float(re.sub('\D','',Area))/100
+            housing = HomeresourceItem(cp=cp, information=information, picture=picture, area = area, picture1=picture1, locate = locate)
+            # housing = HomeresourceItem(picture=picture)
             yield housing

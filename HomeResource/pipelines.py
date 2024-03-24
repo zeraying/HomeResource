@@ -19,6 +19,15 @@ class HomeresourcePipeline:
     def close_spider(self, spider):
         self.fp.close()
 
+import urllib.request
+class pipline2:
+    def process_item(self, item, spider):
+        picture = item.get("picture")
+        file = './book/'+item.get('cp')
+        print(picture)
+        urllib.request.urlretrieve(url=picture,filename=file)
+        # var = requests.get(url=picture).content
+
 
 from scrapy.utils.project import get_project_settings
 import pymysql
@@ -49,11 +58,12 @@ class MysqlPipline:
     def process_item(self, item, spider):
         sql = "insert into `outer` (`price`,`title`,`location`) values ('%s','%s','%s')" % \
               (item['price'], item['title'], item['location'])
-        # sql1 = "insert into `inner` (`cp`,`information`,`picture`,`locat`) values ('%s','%s','%s','%s')" % \
-        #        (item['cp'], item['information'], item['picture'], item['locat'])
+        # sql1 = "insert into `inner` (`cp`,`information`,`picture`,`area`, `locate`) values ('%s','%s','%s','%s','%s')" % \
+        #        (item['cp'], item['information'], item['picture'], item['area'], item['locate'])
         # 执行sql语句
         self.cursor.execute(sql)
         print('插入成功')
+        # print(item['picture1'])
         # self.cursor.execute(sql1)
         # print('插入成功1')
         # 提交
