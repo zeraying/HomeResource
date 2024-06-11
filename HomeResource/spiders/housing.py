@@ -1,11 +1,9 @@
 import re
-
 import requests
 import scrapy
 from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import CrawlSpider, Rule
 from HomeResource.items import HomeresourceItem
-# import urllib.request
 
 class HousingSpider(scrapy.Spider):
     name = 'housing'
@@ -15,10 +13,10 @@ class HousingSpider(scrapy.Spider):
     def parse(self, response):
         img_list = response.xpath('/html/body/div[4]/div[5]/div/div[2]/dl')
         for img in img_list:
-            title = img.xpath('./dd/p[@class="title"]/a/@title').extract_first()
+            # title = img.xpath('./dd/p[@class="title"]/a/@title').extract_first()
             price = img.xpath('./dd/div/p/span/text()').extract_first()
             location = img.xpath('./dd/p[@class="gray6"]/text()').extract_first()
-            housing = HomeresourceItem(title=title, price = price, location=location)
+            housing = HomeresourceItem(price = price, location=location)
             url = img.xpath('./dd/p[@class="title"]/a/@href').extract_first()
             # yield scrapy.Request(url='https://www.gu-gu.com/' + url, callback=self.new_parse)
             yield housing
@@ -44,10 +42,11 @@ class HousingSpider(scrapy.Spider):
                     g = g + 1
             picture = a[0]
             locate = img.xpath('./div[1]/div[2]/div[5]/div[2]/div[2]/a/text()').extract_first()
+            title = img.xpath('./div[1]/h1/text()').extract_first()
             picture1 = requests.get(url=picture).content
             print(type(picture1))
             Area = img.xpath('./div[1]/div[2]/div[3]/div[3]/div[1]/text()').extract_first()
             area = float(re.sub('\D','',Area))/100
-            housing = HomeresourceItem(cp=cp, information=information, picture=picture, area = area, picture1=picture1, locate = locate)
+            housing = HomeresourceItem(cp=cp, information=information, picture=picture, area = area, picture1=picture1, locate = locate, title = title)
             # housing = HomeresourceItem(picture=picture)
             yield housing

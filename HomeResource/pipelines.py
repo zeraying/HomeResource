@@ -12,7 +12,7 @@ class HomeresourcePipeline:
     def open_spider(self, spider):
         self.fp = open('housing.json', 'a', encoding='utf-8')
 
-    def process_item(self, item, spider):
+    def process_item(self, item):
         self.fp.write(str(item))
         return item
 
@@ -21,7 +21,7 @@ class HomeresourcePipeline:
 
 import urllib.request
 class pipline2:
-    def process_item(self, item, spider):
+    def process_item(self, item):
         picture = item.get("picture")
         file = './book/'+item.get('cp')
         print(picture)
@@ -34,7 +34,7 @@ import pymysql
 
 
 class MysqlPipline:
-    def open_spider(self, spider):
+    def open_spider(self):
         settings = get_project_settings()
         self.host = settings['DB_HOST']
         self.port = settings['DB_PORT']
@@ -55,11 +55,10 @@ class MysqlPipline:
         self.cursor = self.conn.cursor()
         print("连接成功")
 
-    def process_item(self, item, spider):
-        sql = "insert into `outer` (`price`,`title`,`location`) values ('%s','%s','%s')" % \
-              (item['price'], item['title'], item['location'])
-        # sql1 = "insert into `inner` (`cp`,`information`,`picture`,`area`, `locate`) values ('%s','%s','%s','%s','%s')" % \
-        #        (item['cp'], item['information'], item['picture'], item['area'], item['locate'])
+    def process_item(self, item):
+        sql = "insert into `beijing_outer` (`price`,`location`) values ('%s','%s')" % (item['price'], item['location'])
+        # sql1 = "insert into `beijing_inner` (`cp`,`title`,`information`,`picture`,`area`, `locate`) values ('%s','%s','%s','%s','%s','%s')" % \
+        #        (item['cp'], item['title'], item['information'], item['picture'], item['area'], item['locate'])
         # 执行sql语句
         self.cursor.execute(sql)
         print('插入成功')
@@ -70,6 +69,6 @@ class MysqlPipline:
         self.conn.commit()
         return item
 
-    def close_spider(self, spider):
+    def close_spider(self):
         self.cursor.close()
         self.conn.close()
